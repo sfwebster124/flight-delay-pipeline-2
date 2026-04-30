@@ -36,4 +36,4 @@
 
 This summary is derived from the included poster significance output:
 
-- `reports/poster_significance_tests.md`
+- `reports/significance_tests.md`

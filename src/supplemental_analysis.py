@@ -1,4 +1,4 @@
-"""Poster-oriented supplemental analysis for the flight-delay project."""
+"""Supplemental analysis for the flight-delay project."""
 
 from __future__ import annotations
 
@@ -53,16 +53,16 @@ def _slugify_model_name(name: str) -> str:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Generate poster-specific supplemental outputs.")
-    parser.add_argument("--top-origins", type=int, default=25, help="Top N origins to retain for poster experiments.")
+    parser = argparse.ArgumentParser(description="Generate supplemental analysis outputs.")
+    parser.add_argument("--top-origins", type=int, default=25, help="Top N origins to retain for supplemental experiments.")
     parser.add_argument("--folds", type=int, default=4, help="Number of temporal folds for significance tests.")
-    parser.add_argument("--train-cap", type=int, default=60000, help="Per-fold train sample cap for poster model experiments.")
-    parser.add_argument("--test-cap", type=int, default=20000, help="Per-fold test sample cap for poster model experiments.")
+    parser.add_argument("--train-cap", type=int, default=60000, help="Per-fold train sample cap for supplemental model experiments.")
+    parser.add_argument("--test-cap", type=int, default=20000, help="Per-fold test sample cap for supplemental model experiments.")
     parser.add_argument(
         "--dataset-path",
         type=str,
         default="data/modeling_dataset_fm15_strict_top25.parquet",
-        help="Relative or absolute parquet path to use for poster experiments.",
+        help="Relative or absolute parquet path to use for supplemental experiments.",
     )
     parser.add_argument(
         "--use-full-data",
@@ -73,26 +73,26 @@ def parse_args() -> argparse.Namespace:
         "--report-subdir",
         type=str,
         default="",
-        help="Optional subdirectory under reports/ for poster outputs from a specialized run.",
+        help="Optional subdirectory under reports/ for supplemental outputs from a specialized run.",
     )
-    parser.add_argument("--llm-model", type=str, default="gpt-5", help="OpenAI model name to use for the optional LLM poster analysis.")
+    parser.add_argument("--llm-model", type=str, default="gpt-5", help="OpenAI model name to use for the optional LLM analysis.")
     parser.add_argument(
         "--llm-backend",
         type=str,
         default="auto",
         choices=["auto", "openai", "local"],
-        help="LLM backend for the poster interpretation step.",
+        help="LLM backend for the supplemental interpretation step.",
     )
     parser.add_argument(
         "--local-llm-model",
         type=str,
         default="HuggingFaceTB/SmolLM2-360M-Instruct",
-        help="Free local Hugging Face model id for the poster interpretation step.",
+        help="Free local Hugging Face model id for the supplemental interpretation step.",
     )
     parser.add_argument(
         "--llm-only",
         action="store_true",
-        help="Run only the poster LLM interpretation step using existing report outputs.",
+        help="Run only the supplemental LLM interpretation step using existing report outputs.",
     )
     parser.add_argument(
         "--final-sweep-only",
@@ -375,7 +375,7 @@ def write_supervised_model_comparison_with_llm(
     strict_reports_dir: Path,
     figures_dir: Path,
 ) -> None:
-    model_summary = pd.read_csv(poster_reports_dir / "poster_model_summary.csv").copy()
+    model_summary = pd.read_csv(poster_reports_dir / "model_summary.csv").copy()
     llm_summary = pd.read_csv(strict_reports_dir / "llm_delay_model_comparison.csv").copy()
     llm_best = llm_summary.sort_values(["f1", "accuracy"], ascending=False).iloc[0]
 
@@ -609,7 +609,7 @@ def run_poster_model_experiments(
     )
     summary_metrics["dataset_rows"] = len(frame)
     summary_metrics["full_data"] = int(use_full_data)
-    summary_metrics.to_csv(reports_dir / "poster_model_summary.csv", index=False)
+    summary_metrics.to_csv(reports_dir / "model_summary.csv", index=False)
     return fold_metrics, summary_metrics
 
 
@@ -636,7 +636,7 @@ def write_hyperparameter_summary(reports_dir: Path) -> None:
             "key_hyperparameters": "hidden_layer_sizes=(64,32); alpha=0.0005; learning_rate_init=0.001; max_iter=80; early_stopping=True",
         },
     ]
-    pd.DataFrame(rows).to_csv(reports_dir / "poster_hyperparameters.csv", index=False)
+    pd.DataFrame(rows).to_csv(reports_dir / "model_hyperparameters.csv", index=False)
     lines = [
         "# Poster Hyperparameter Summary",
         "",
@@ -645,7 +645,7 @@ def write_hyperparameter_summary(reports_dir: Path) -> None:
         "",
         pd.DataFrame(rows).to_markdown(index=False),
     ]
-    (reports_dir / "poster_hyperparameters.md").write_text("\n".join(lines), encoding="utf-8")
+    (reports_dir / "model_hyperparameters.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 def write_significance_tests(fold_metrics: pd.DataFrame, reports_dir: Path) -> None:
@@ -683,7 +683,7 @@ def write_significance_tests(fold_metrics: pd.DataFrame, reports_dir: Path) -> N
                 "",
             ]
         )
-    (reports_dir / "poster_significance_tests.md").write_text("\n".join(lines), encoding="utf-8")
+    (reports_dir / "significance_tests.md").write_text("\n".join(lines), encoding="utf-8")
     (reports_dir / "statistical_tests_summary.md").write_text("\n".join(summary_lines), encoding="utf-8")
 
 
@@ -762,8 +762,8 @@ def plot_interpretability(
 
 def _build_llm_prompt(reports_dir: Path) -> tuple[str, Path]:
     dataset_summary = pd.read_csv(reports_dir / "poster_dataset_summary.csv")
-    model_summary = pd.read_csv(reports_dir / "poster_model_summary.csv")
-    significance_tests = (reports_dir / "poster_significance_tests.md").read_text(encoding="utf-8")
+    model_summary = pd.read_csv(reports_dir / "model_summary.csv")
+    significance_tests = (reports_dir / "significance_tests.md").read_text(encoding="utf-8")
     top_origin_row = dataset_summary.loc[dataset_summary["dataset"].str.contains("top_")].iloc[0]
     prompt = "\n".join(
         [
@@ -780,16 +780,16 @@ def _build_llm_prompt(reports_dir: Path) -> tuple[str, Path]:
             "Keep it under 350 words.",
         ]
     )
-    prompt_path = reports_dir / "poster_llm_prompt.txt"
+    prompt_path = reports_dir / "llm_prompt.txt"
     prompt_path.write_text(prompt, encoding="utf-8")
     return prompt, prompt_path
 
 
 def write_llm_poster_analysis(llm_model: str, llm_backend: str, local_llm_model: str, reports_dir: Path) -> None:
     prompt, prompt_path = _build_llm_prompt(reports_dir)
-    output_path = reports_dir / "poster_llm_analysis.md"
+    output_path = reports_dir / "llm_analysis.md"
     model_tag = _slugify_model_name(local_llm_model if llm_backend == "local" or (llm_backend == "auto" and not os.getenv("OPENAI_API_KEY")) else llm_model)
-    model_output_path = reports_dir / f"poster_llm_analysis_{model_tag}.md"
+    model_output_path = reports_dir / f"llm_analysis_{model_tag}.md"
     backend = llm_backend
     api_key = os.getenv("OPENAI_API_KEY")
     if backend == "auto":

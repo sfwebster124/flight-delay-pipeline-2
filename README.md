@@ -4,7 +4,7 @@ This folder is a clean GitHub-ready export of the final project from `DSCI Proje
 
 - the source code used to build and analyze the project
 - the final filtered modeling dataset used in the final workflow
-- small non-visual summary outputs for the paper/poster results
+- small non-visual summary outputs for the final project results
 
 Raw downloads, large intermediates, caches, and visual assets are intentionally excluded.
 
@@ -21,7 +21,7 @@ The main tasks are:
 - late-only regression for departure delay severity
 - imbalance handling comparison
 - PCA comparison
-- supplemental poster analysis including clustering, neural network, significance testing, and LLM comparison
+- supplemental analysis including clustering, neural network, significance testing, and LLM comparison
 
 ## Repository Layout
 
@@ -60,7 +60,7 @@ See `data/README.md` for the dataset-specific note.
 
 ## Statistical Testing
 
-The poster workflow uses:
+The supplemental comparison workflow uses:
 
 - one-way **ANOVA** across temporal-fold model metrics
 - **Tukey HSD** for pairwise follow-up comparisons
@@ -130,12 +130,12 @@ python src/final_model_analysis.py --full-filtered-data
 - no `250k / 100k` sample cap
 - intended for slower but more complete final runs
 
-### Poster workflow
+### Supplemental workflow
 
 - command:
 
 ```powershell
-python src/poster_analysis.py --use-full-data
+python src/supplemental_analysis.py --use-full-data
 ```
 
 - uses the same included strict top-25 dataset
@@ -164,10 +164,10 @@ To reproduce the full final-model run on all included rows:
 python src/final_model_analysis.py --full-filtered-data
 ```
 
-## Reproduce Poster Supplemental Results
+## Reproduce Supplemental Results
 
 ```powershell
-python src/poster_analysis.py --use-full-data
+python src/supplemental_analysis.py --use-full-data
 ```
 
 ## Rebuild the Dataset from Raw Data
@@ -203,10 +203,10 @@ The `reports/` folder contains small non-visual summaries only:
 - imbalance comparison
 - PCA comparison
 - preprocessing summary
-- poster model summary
-- poster significance tests
-- poster hyperparameter summary
-- poster LLM analysis
+- model summary
+- significance tests
+- model hyperparameter summary
+- LLM analysis
 - statistical tests summary
 
 ## Excluded Contents
