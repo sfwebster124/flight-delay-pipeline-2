@@ -6,5 +6,9 @@ raw/
 processed/
 cache/
 reports/**/figures/
+!reports/figures/
+reports/figures/*
 *.parquet
 !data/modeling_dataset_fm15_strict_top25.parquet
+!data/airport_station_mapping.parquet
+!reports/figures/final_airport_delay_bubble_map.png

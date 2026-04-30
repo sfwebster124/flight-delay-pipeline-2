@@ -3,6 +3,7 @@
 This folder contains the final included modeling file:
 
 - `modeling_dataset_fm15_strict_top25.parquet`
+- `airport_station_mapping.parquet`
 
 ## Pipeline Summary
 
@@ -30,6 +31,7 @@ This folder contains the final included modeling file:
 - source family: BTS flights + NOAA FM-15 weather
 - modeling role: final included dataset for the GitHub package
 - row count: `1,796,653`
+- supporting lookup: airport-to-weather-station mapping used for the airport bubble map
 
 ## Dataset Size Decision
 
