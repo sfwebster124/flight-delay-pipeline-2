@@ -1,0 +1,3 @@
+experiment,f1,roc_auc,pr_auc,pca_components,numeric_variance_explained
+logistic_regression_balanced_no_pca,0.5147932399337549,0.7275455571871802,0.52587617034235,,
+logistic_regression_balanced_with_pca,0.514269562228782,0.7252885941401745,0.5220970326466314,20.0,0.9526620876073947

@@ -1,0 +1,10 @@
+__pycache__/
+.venv/
+*.log
+*.zip
+raw/
+processed/
+cache/
+reports/**/figures/
+*.parquet
+!data/modeling_dataset_fm15_strict_top25.parquet
