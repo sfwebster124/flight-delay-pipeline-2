@@ -44,6 +44,7 @@ The pipeline is:
 For this GitHub package, the included final dataset is already the strict FM-15 top-25 subset:
 
 - `data/modeling_dataset_fm15_strict_top25.parquet`
+- `data/airport_station_mapping.parquet`
 - rows: `1,796,653`
 
 See `data/README.md` for the dataset-specific note.
@@ -95,6 +96,67 @@ python src/final_model_analysis.py
 ```
 
 That command runs the included strict top-25 parquet because the packaged script defaults were adjusted for this repo layout.
+
+## Data Limits, Splits, and Runtime Modes
+
+- **Included dataset:** `data/modeling_dataset_fm15_strict_top25.parquet`
+- **Included row count:** `1,796,653`
+- **Default temporal split:** the packaged workflow splits by date, with training on earlier flights and testing on later flights.
+- **Current split point in the included dataset:** `2025-07-11`
+- **Current split sizes:** `1,425,317` train rows and `371,336` test rows
+
+### Default `final_model_analysis.py` run
+
+- uses the full included parquet for loading and filtering
+- then caps model-training runtime with sampled subsets
+- **sampled train size:** `250,000`
+- **sampled test size:** `100,000`
+- applies to:
+  - classification models
+  - regression models
+  - imbalance comparison
+  - PCA logistic comparison
+
+### Full-data `final_model_analysis.py` run
+
+- command:
+
+```powershell
+python src/final_model_analysis.py --full-filtered-data
+```
+
+- uses the same temporal split
+- trains and evaluates on **all rows after filtering**
+- no `250k / 100k` sample cap
+- intended for slower but more complete final runs
+
+### Poster workflow
+
+- command:
+
+```powershell
+python src/poster_analysis.py --use-full-data
+```
+
+- uses the same included strict top-25 dataset
+- uses temporal fold-based model comparison on the full filtered dataset
+- intended for poster-level comparison outputs such as:
+  - model comparison summaries
+  - significance testing
+  - clustering
+  - interpretability outputs
+
+### LLM workflow
+
+- command:
+
+```powershell
+python src/llm_row_prediction.py
+```
+
+- does **not** score the full dataset row-by-row by default
+- uses a temporal split first, then evaluates a smaller held-out sample of test rows
+- intended as an exploratory prompt-based comparison rather than a full tabular training workflow
 
 To reproduce the full final-model run on all included rows:
 
@@ -157,5 +219,7 @@ This GitHub package excludes:
 - notebook outputs
 - Python cache folders
 - visual figures
+
+One exception is the final airport bubble-map figure, which can now be regenerated from the included airport-to-station mapping file.
 
 That keeps the repository smaller and focused on code, the final included dataset, and compact summary outputs.
