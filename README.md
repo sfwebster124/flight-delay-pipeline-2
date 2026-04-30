@@ -140,7 +140,7 @@ python src/supplemental_analysis.py --use-full-data
 
 - uses the same included strict top-25 dataset
 - uses temporal fold-based model comparison on the full filtered dataset
-- intended for poster-level comparison outputs such as:
+- intended for supplemental comparison outputs such as:
   - model comparison summaries
   - significance testing
   - clustering
